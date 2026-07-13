@@ -187,3 +187,155 @@ admixture_plot <- ggplot(Q_long,
 
 admixture_plot
 ```
+# Graph ADMIXTURE plots as pi charts on geographic map
+## Load necessary libraries
+```bash
+library(mapmixture)
+library(terra)
+library(dplyr)
+library(raster)
+library(sf)
+library(gridExtra)
+library(ggplot2)
+```
+## Read metadata
+```bash
+njinfo <- read.delim(
+  "pop_map_samelatlong.txt",
+  header = TRUE,
+  sep = "\t",
+  stringsAsFactors = FALSE
+)
+#inspect
+head(njinfo)
+```
+## Read ADMIXTURE Q file
+```bash
+nj_admixk5 <- read.table(
+  "snps_filtered.nodups.int.5.Q"
+)
+#inspect
+head(nj_admixk5)
+```
+## Name clusters
+```bash
+colnames(nj_admixk5) <- c(
+  "Cluster1",
+  "Cluster2",
+  "Cluster3",
+  "Cluster4",
+  "Cluster5"
+)
+
+#force numeric
+cluster_cols <- c(
+  "Cluster1",
+  "Cluster2",
+  "Cluster3",
+  "Cluster4",
+  "Cluster5"
+)
+
+nj_admixk5[cluster_cols] <- lapply(
+  nj_admixk5[cluster_cols],
+  as.numeric
+)
+```
+
+## Add Sample Names
+```bash
+admix_only <- data.frame(
+  Site = njinfo$city,
+  Ind = njinfo$sample,
+  Cluster1 = nj_admixk5$Cluster1,
+  Cluster2 = nj_admixk5$Cluster2,
+  Cluster3 = nj_admixk5$Cluster3,
+  Cluster4 = nj_admixk5$Cluster4,
+  Cluster5 = nj_admixk5$Cluster5,
+  stringsAsFactors = FALSE
+)
+
+#inspect
+head(admix_only)
+```
+## Add Coordinates 
+```bash
+coordnj <- data.frame(
+  Site = njinfo$city,
+  Lat = njinfo$latitude,
+  Long = njinfo$longitude,
+  stringsAsFactors = FALSE
+)
+
+coordnj<-unique(coordnj)
+
+#inspect
+head(coordnj)
+```
+## Load Geotiff base map
+```bash
+NJ <- terra::rast(
+  "NJ_satellite_buffered.tif"
+)
+
+#inspect extent
+terra::ext(NJ)
+```
+## Plot Map
+```bash
+library(ggplot2)
+
+njbal <- mapmixture(
+  
+  admixture_df = admix_only,
+  
+  coords_df = coordnj,
+  
+  cluster_cols = c(
+    "#3F858CFF",
+    "#6D62AFFF",
+    "#F2D43DFF",
+    "#D9814EFF",
+    "#731A12FF"
+  ),
+  
+  cluster_names = c(
+    "Ancestry 1",
+    "Ancestry 2",
+    "Ancestry 3",
+    "Ancestry 4",
+    "Ancestry 5"
+  ),
+  
+  crs = 4326,
+  
+  boundary = c(
+    xmin = -75.0,
+    xmax = -73.95,
+    ymin = 40.0,
+    ymax = 41.0
+  ),
+  
+  pie_size = 0.05,
+  
+  basemap = NJ
+) +
+  
+  scale_fill_manual(
+    values = c(
+      "Ancestry 1" = "#3F858CFF",
+      "Ancestry 2" = "#6D62AFFF",
+      "Ancestry 3" = "#F2D43DFF",
+      "Ancestry 4" = "#D9814EFF",
+      "Ancestry 5" = "#731A12FF"
+    )
+  ) +
+  
+  theme(
+    legend.position = "right"
+  ) +
+  #Adjust the size of the legend keys
+  guides(fill = guide_legend(override.aes = list(size = 5, alpha = 1)))
+
+njbal
+```
