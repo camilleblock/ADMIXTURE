@@ -1,5 +1,6 @@
 # ADMIXTURE 
 <img width="1966" height="372" alt="image" src="https://github.com/user-attachments/assets/92b6c700-f9eb-4d9b-a07a-71a4386c05f7" />
+<img width="1208" height="1140" alt="image" src="https://github.com/user-attachments/assets/35ba1b2f-de13-49e0-8fd7-b6902ca34d92" />
 
 ## Introduction
 This page is a work in progress!
