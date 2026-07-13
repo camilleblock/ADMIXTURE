@@ -50,7 +50,8 @@ source ~/.bashrc
 ```bash
 admixture --cv snps_subset1.int75.bed 1 > logsubset1_1.out
 ```
-# Graph ADMIXTURE plots using R (the K with the lowest CV error is probably correct but must look at graphs too)
+# Graph ADMIXTURE plots using R 
+The K with the lowest CV error is probably correct but you must look at the graphs too. 
 
 ## Load necessary libraries 
 ```bash
