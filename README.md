@@ -23,11 +23,13 @@ module load BCFtools/1.21-GCC-13.3.0
 module load PLINK/2.00a3.7-gfbf-2023a
 module load VCFtools/0.1.16-GCC-13.2.0
 ```
-## Subset vcf file so that it runs faster (break up samples into groups of 30-50)
+## Subset vcf file so that it runs faster 
+Break up samples into groups of 30-50.
 ```bash
 bcftools view -S keep1.txt snps_merged.integer.maf001.geno75.final.vcf.gz -Oz -o subset1.vcf.gz
 ```
-## Index files so that Plink can read them (this must be done separately for each group of samples)
+## Index files so that Plink can read them 
+This must be done separately for each group of samples.
 ```bash
 tabix -p vcf subset1.vcf.gz
 ```
